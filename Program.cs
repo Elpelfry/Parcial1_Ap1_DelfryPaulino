@@ -1,10 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using Parcial1_Ap1_DelfryPaulino.Components;
+using Parcial1_Ap1_DelfryPaulino.DAL;
+using Parcial1_Ap1_DelfryPaulino.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
+builder.Services.AddScoped<MetasService>();
 
 var app = builder.Build();
 
