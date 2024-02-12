@@ -1,0 +1,111 @@
+﻿@page "/MIndex"
+@inject MetasService metasService
+@rendermode InteractiveServer
+
+<PageTitle>Metas</PageTitle>
+
+<div class="card shadow">
+    <div class="card-header bg-primary">
+        <h2 class="text-light text-center">Metas</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <label class="fw-bold">Buscar por:</label>
+            <div class="col col-2">
+                <InputSelect @bind-Value="Opcion" class="form-select">
+                    <option value="1">Meta Id</option>
+                    <option value="2">Fecha</option>
+                    <option value="3">Monto</option>
+                    <option value="4">Todo</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-auto">
+                @switch (Opcion)
+                {
+                    case 1:
+                        <div class="input-group">
+                            <InputNumber @bind-Value="meta.MetaId" class="form-control"></InputNumber>
+                            <button type="button" class="btn btn-primary bi bi-search" @onclick="Filtrar"></button>
+                        </div>
+                        break;
+                    case 2:
+                        <div class="input-group">
+                            <InputDate @bind-Value="fechainicio" class="form-control"></InputDate>
+                            <InputDate @bind-Value="fechafinal" class="form-control"></InputDate>
+                            <button type="button" class="btn btn-primary bi bi-search" @onclick="Filtrar"></button>
+                        </div>
+                        break;
+                    case 3:
+                        <div class="input-group">
+                            <InputNumber @bind-Value="meta.Monto" class="form-control"></InputNumber>
+                            <button type="button" class="btn btn-primary bi bi-search" @onclick="Filtrar"></button>
+                        </div>
+                        break;
+                    case 4:
+                        <button type="button" class="btn btn-primary bi bi-search" @onclick="Filtrar">Buscar</button>
+                        break;
+                }
+            </div>
+
+            <div class="col d-flex justify-content-end">
+                <a href="/MCreate" class="btn btn-success bi bi-plus">Crear</a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <table class="table table-bordered table-light">
+            <thead>
+                <tr class="text-center fw-bold">
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Editar</th>
+                    <th>Detalle</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ListaMetas)
+                {
+                    <tr>
+                        <td>@item.Monto</td>
+                        <td>@item.Fecha.ToString("dd/mm/yyyy")</td>
+                        <td><a href="/MEdit/@item.MetaId" class="btn btn-primary bi bi-pencil"></a></td>
+                        <td><a href="/MDetails/@item.MetaId" class="btn btn-primary bi bi-card"></a></td>
+                        <td><a href="/MDelete/@item.MetaId" class="btn btn-primary bi bi-trash"></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+
+    public Metas meta = new Metas();
+    public List<Metas> ListaMetas = new List<Metas>();
+    public int Opcion { get; set; }
+
+    public DateTime fechainicio { get; set; }
+    public DateTime fechafinal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaMetas = await metasService.Listar(m => true);
+
+        fechafinal = DateTime.Now;
+        fechainicio = DateTime.Now;
+    }
+
+    public async Task Filtrar()
+    {
+        if (Opcion == 1 && meta.MetaId > 0)
+            ListaMetas = await metasService.Listar(m => m.MetaId == meta.MetaId);
+        else if (Opcion == 2)
+            ListaMetas = await metasService.Listar(m => m.Fecha >= fechainicio && fechafinal <= m.Fecha);
+        else if (Opcion == 3 && meta.Monto > 0)
+            ListaMetas = await metasService.Listar(m => m.Monto == meta.Monto);
+        else if (Opcion == 4)
+            ListaMetas = await metasService.Listar(m => true);
+    }
+}
