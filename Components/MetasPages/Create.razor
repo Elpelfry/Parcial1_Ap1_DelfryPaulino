@@ -1,0 +1,89 @@
+﻿@page "/MCreate"
+@inject MetasService metasService
+@rendermode InteractiveServer
+
+<PageTitle>Registrar Meta</PageTitle>
+
+<EditForm Model="meta" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator/>
+    <div class="card shadow">
+        <div class="card-header bg-primary">
+            <h2 class="text-light text-center">Registrar Metas</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <label class="fw-bold">Monto</label>
+                    <InputNumber @bind-Value="meta.Monto" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => meta.Monto)"/>
+                </div>
+                <div class="col-4">
+                    <label class="fw-bold">Fecha</label>
+                    <InputDate @bind-Value="meta.Fecha" class="form-control"></InputDate>
+                    <ValidationMessage For="@(() => meta.Fecha)" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <label class="fw-bold">Descripci&oacute;n</label>
+                    <InputTextArea @bind-Value="meta.Descripcion" class="form-control"></InputTextArea>
+                    <ValidationMessage For="@(() => meta.Descripcion)" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/MIndex" class="btn btn-primary bi bi-house">Volver</a>
+                <button type="button" class="btn btn-secondary bi bi-card-text" @onclick="Nuevo"> Nuevo</button>
+                <button type="submit" class="btn btn-success bi bi-plus">Guardar</button>
+            </div>
+            <div class="col col-2">
+                @if(resultado == 1)
+                {
+                    <p class="alert-success">@mensaje</p>
+                }
+                else if (resultado == 2)
+                {
+                    <p class="alert-danger">@mensaje</p>
+                }
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    public Metas meta = new Metas();
+    public int resultado { get; set; }
+    public string? mensaje { get; set; }
+
+    protected override void OnInitialized() => meta.Fecha = DateTime.Now;
+
+    public async Task Guardar()
+    {
+        var guardado = await metasService.Guardar(meta);
+        if(guardado)
+        {
+            meta = new Metas();
+            mensaje = "Guardado";
+            resultado = 1;
+        }
+        else
+        {
+            mensaje = "No Guardado";
+            resultado = 2;
+        }
+    }
+
+    public void Limpiar()
+    {
+        mensaje = string.Empty;
+        resultado = 0;
+    }
+
+    public void Nuevo()
+    {
+        Limpiar();
+        meta = new Metas();
+    }
+}
