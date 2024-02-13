@@ -101,8 +101,8 @@
     {
         if (Opcion == 1 && meta.MetaId > 0)
             ListaMetas = await metasService.Listar(m => m.MetaId == meta.MetaId);
-        else if (Opcion == 2)
-            ListaMetas = await metasService.Listar(m => m.Fecha >= fechainicio && fechafinal <= m.Fecha);
+        else if (Opcion == 2 && fechafinal != default && fechainicio != default)
+            ListaMetas = await metasService.Listar(m => m.Fecha <= fechafinal && m.Fecha >= fechainicio);
         else if (Opcion == 3 && meta.Monto > 0)
             ListaMetas = await metasService.Listar(m => m.Monto == meta.Monto);
         else if (Opcion == 4)
