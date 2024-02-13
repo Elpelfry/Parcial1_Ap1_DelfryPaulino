@@ -1,0 +1,57 @@
+﻿@page "/MDelete"
+@page "/MDelete/{MetaId:int}"
+@inject MetasService metasService
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Meta</PageTitle>
+
+<div class="card shadow">
+    <div class="card-header bg-primary">
+        <h2 class="text-light text-center">Eliminar Meta</h2>
+    </div>
+    <div class="card-body">
+        <p><strong>Id: </strong>@meta.MetaId</p>
+        <p><strong>Monto: </strong>@meta.Monto</p>
+        <p><strong>Fecha: </strong>@meta.Fecha.ToString("dd/MM/yyyy")</p>
+        <p><strong>Descripci&oacute;n: </strong>@meta.Descripcion</p>
+    </div>
+    <div class="card-footer">
+        <div class="input-group">
+            <a href="/MIndex" class="btn btn-primary bi bi-house">Volver</a>
+            <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int MetaId { get; set; }
+    public Metas meta = new Metas();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (MetaId > 0)
+        {
+            meta.MetaId = MetaId;
+            await Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        var Buscado = await metasService.Buscar(meta.MetaId);
+        if (Buscado != null)
+        {
+            meta = Buscado;
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        var eliminado = await metasService.Eliminar(meta);
+        if (eliminado)
+        {
+            meta = new Metas();
+        }
+    }
+}
