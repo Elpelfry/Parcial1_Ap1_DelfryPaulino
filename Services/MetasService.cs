@@ -15,6 +15,8 @@ public class MetasService
     }
     public async Task<bool> Guardar(Metas meta)
     {
+        if (await _contexto.Metas.AnyAsync(m => m.Descripcion!.ToLower() == meta.Descripcion!.ToLower()))
+            return false;
         if (!await Existe(meta.MetaId))
             return await Insertar(meta);
         else
