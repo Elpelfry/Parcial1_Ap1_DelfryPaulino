@@ -9,14 +9,15 @@
     <div class="card-header bg-primary">
         <h2 class="text-light text-center">Detalle Meta</h2>
     </div>
-    <p><strong>Id: </strong></p>
-    <p><strong>Monto: </strong></p>
-    <p><strong>Fecha: </strong></p>
-    <p><strong>Descripci&oacute;n: </strong>@meta.Descripcion</p>
+    <div class="card-body">
+        <p><strong>Id: </strong>@meta.MetaId</p>
+        <p><strong>Monto: </strong>@meta.Monto</p>
+        <p><strong>Fecha: </strong>@meta.Fecha.ToString("dd/MM/yyyy")</p>
+        <p><strong>Descripci&oacute;n: </strong>@meta.Descripcion</p>
+    </div>
     <div class="card-footer">
         <div class="input-group">
             <a href="/MIndex" class="btn btn-primary bi bi-house">Volver</a>
-
         </div>
     </div>
 </div>
